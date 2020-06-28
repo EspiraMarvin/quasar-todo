@@ -1,4 +1,4 @@
-# Quasar App (quasar-todo).
+# Quasar App (quasar-todo)-Vuejs
 
 A Quasar Framework app
 
