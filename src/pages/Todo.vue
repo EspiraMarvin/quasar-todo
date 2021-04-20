@@ -35,10 +35,11 @@
           <q-checkbox
             v-model="task.done"
             class="no-pointer-events"
-            color="primary" />
+            color="primary"
+          />
         </q-item-section>
         <q-item-section>
-        <q-item-label>{{ task.title }}</q-item-label>
+        <q-item-label class="q-item-label">{{ task.title }}</q-item-label>
       </q-item-section>
         <q-item-section
           v-if="task.done"
@@ -97,10 +98,20 @@ export default {
         persistent: true
       }).onOk(() => {
         this.tasks.splice(index, 1)
-        this.$q.notify('Task Deleted!')
+        this.$q.notify({
+          message: 'Task Deleted!',
+          position: 'bottom',
+          timeout: 1500,
+          color: 'grey'
+        })
       })
     },
     addTask () {
+      // regex to check if newTask contains only white spaces
+      if (!this.newTask.replace(/\s/g, '').length) {
+        this.newTask = ''
+        return
+      }
       this.tasks.push({
         title: this.newTask,
         done: false
@@ -118,6 +129,11 @@ export default {
       text-decoration: line-through;
       color: #bbb;
     }
+    //same as above style
+    /*.q-item-label {*/
+    /*  text-decoration: line-through;*/
+    /*  color: #bbb;*/
+    /*}*/
   }
   .no-tasks{
     opacity: 0.5;
