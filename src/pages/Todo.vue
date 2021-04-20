@@ -1,9 +1,9 @@
 <template>
-  <q-page class="bg-grey-3 column">
+  <q-page class="relative-position bg-grey-3">
     <div class="row q-pa-sm bg-primary">
       <q-input
         v-model="newTask"
-        @keyup.enter="addTask"
+        @keyup.enter="addTask(newTask)"
         class="col"
         square
         filled
@@ -20,7 +20,8 @@
         </template>
       </q-input>
     </div>
-    <q-list
+    <q-scroll-area class="absolute full-height full-width">
+     <q-list
       separator
       bordered
       class="bg-white">
@@ -54,6 +55,7 @@
         </q-item-section>
       </q-item>
     </q-list>
+    </q-scroll-area>
     <div
       v-if="!tasks.length"
       class="no-tasks absolute-center">
@@ -89,6 +91,19 @@ export default {
       ]
     }
   },
+  mounted () {
+    if (localStorage.getItem('tasks')) {
+      this.tasks = JSON.parse(localStorage.getItem('tasks'))
+    }
+  },
+  watch: {
+    tasks: {
+      handler () {
+        localStorage.setItem('tasks', JSON.stringify(this.tasks))
+      },
+      deep: true
+    }
+  },
   methods: {
     deleteTask (index) {
       this.$q.dialog({
@@ -97,6 +112,7 @@ export default {
         cancel: true,
         persistent: true
       }).onOk(() => {
+        // this.tasks = this.tasks.filter(task => task.index !== index) // works better with ids, but below we use index
         this.tasks.splice(index, 1)
         this.$q.notify({
           message: 'Task Deleted!',
@@ -106,18 +122,18 @@ export default {
         })
       })
     },
-    addTask () {
+    addTask (newTask) {
       // regex to check if newTask contains only white spaces
       if (!this.newTask.replace(/\s/g, '').length) {
         this.newTask = ''
         return
       }
-      this.tasks.push({
-        title: this.newTask,
+      const newTaskAdd = {
+        title: newTask,
         done: false
-      })
+      }
+      this.tasks = [...this.tasks, newTaskAdd]
       this.newTask = ''
-      // console.log('Add Task')
     }
   }
 }
